@@ -1,0 +1,129 @@
+[
+    {
+        "_id_": "CONFIRMATION",
+        "type": "selection",
+        "selectionOptions": [
+            {
+                "menuNodeId": "YES",
+                "displayName": "Yes"
+            },
+            {
+                "menuNodeId": "NO",
+                "displayName": "No"
+            }
+        ]
+    },
+    {
+        "_id_": "YES",
+        "type": "execution",
+        "executorNodeId": "YES"
+    },
+    {
+        "_id_": "NO",
+        "type": "execution",
+        "executorNodeId": "NO"
+    },
+    {
+        "_id_": "OUTPUT",
+        "type": "output"
+    },
+    {
+        "_id_": "ROOT",
+        "type": "selection",
+        "selectionOptions": [
+            {
+                "menuNodeId": "YUAD5J",
+                "displayName": "Hello World!"
+            },
+            {
+                "menuNodeId": "LAKMYC",
+                "displayName": "Get Ip Address"
+            },
+            {
+                "menuNodeId": "9ZVSEZ",
+                "displayName": "Hello World confirm"
+            },
+            {
+                "menuNodeId": "1OCQZ8",
+                "displayName": "Sub Menu"
+            }
+        ]
+    },
+    {
+        "_id_": "YUAD5J",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "LAKMYC",
+        "type": "execution",
+        "executorNodeId": "DZPWJB"
+    },
+    {
+        "_id_": "9ZVSEZ",
+        "type": "execution",
+        "confirm": true,
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "1OCQZ8",
+        "type": "selection",
+        "selectionOptions": [
+            {
+                "menuNodeId": "T5JMML",
+                "displayName": "Sub Menu Option 1"
+            },
+            {
+                "menuNodeId": "RMZ0P7",
+                "displayName": "Sub Menu Option 2"
+            },
+            {
+                "menuNodeId": "O14ETB",
+                "displayName": "Hello World confirm"
+            },
+            {
+                "menuNodeId": "6Z9B0H",
+                "displayName": "Sub Menu Option 4"
+            },
+            {
+                "menuNodeId": "D8SUTB",
+                "displayName": "Sub Menu Option 5"
+            },
+            {
+                "menuNodeId": "CSYC82",
+                "displayName": "Sub Menu Option 6"
+            }
+        ]
+    },
+    {
+        "_id_": "T5JMML",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "RMZ0P7",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "O14ETB",
+        "type": "execution",
+        "confirm": true,
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "6Z9B0H",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "D8SUTB",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "CSYC82",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    }
+]
