@@ -1,0 +1,26 @@
+[
+    {
+        "_id_": "ROOT",
+        "type": "selection",
+        "selectionOptions": [
+            {
+                "menuNodeId": "BADID",
+                "displayName": "Hello World!"
+            },
+            {
+                "menuNodeId": "LAKMYC",
+                "displayName": "Get Ip Address"
+            }
+        ]
+    },
+    {
+        "_id_": "YUAD5J",
+        "type": "execution",
+        "executorNodeId": "ER5KI5"
+    },
+    {
+        "_id_": "LAKMYC",
+        "type": "execution",
+        "executorNodeId": "DZPWJB"
+    }
+]

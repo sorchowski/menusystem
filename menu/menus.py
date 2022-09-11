@@ -1,5 +1,5 @@
 import json
-from typing import List, Callable
+from typing import List, Callable, Dict
 from enum import Enum, unique, auto
 import subprocess
 from subprocess import CalledProcessError
@@ -51,7 +51,7 @@ class SelectionOption(object):
         return self._displayName
 
     @staticmethod
-    def as_selection_option(dct):
+    def as_selection_option(dct: Dict):
         return SelectionOption(id=dct['menuNodeId'],displayName=dct['displayName'])
 
 
@@ -79,7 +79,7 @@ class ExecutorNode(object):
         return self._destinationOverride
 
     @staticmethod
-    def as_executor_node(dct):
+    def as_executor_node(dct: Dict):
         executorNodeType = ExecutorNodeType(dct['type'])
         destination = MenuDestination(dct['destinationOverride']) if 'destinationOverride' in dct else None
         return ExecutorNode(id=dct['_id_'],executorNodeType=executorNodeType,name=dct['name'],destination=destination)
@@ -119,7 +119,7 @@ class MenuNode(object):
         return self._isConfirm
 
     @staticmethod
-    def as_menu_node(dct):
+    def as_menu_node(dct: Dict):
         if '_id_' in dct:
             selOptions = [SelectionOption.as_selection_option(selOption) for selOption in dct['selectionOptions']] if 'selectionOptions' in dct else None
             eId = dct['executorNodeId'] if 'executorNodeId' in dct else None
@@ -133,30 +133,28 @@ class MenuNode(object):
 class Menus(object):
     def __init__(self, menu_nodes_filename: str):
 
-        self._menunodes_list = self.load_menu_nodes(menu_nodes_filename)
+        _menunodes_list = self.load_menu_nodes(menu_nodes_filename)
 
         # validate no duplicate menu node ids
-        check_for_duplicates([menunode._menuNodeId for menunode in self._menunodes_list])
+        # also validates one and only one node is the root since the root node is identified by the special id 'ROOT'
+        check_for_duplicates([menunode._menuNodeId for menunode in _menunodes_list])
 
-        # validate exactly one menu node is identified as the root node
-        self.validate_one_root_node(self._menunodes_list)
-
-        self._menunodes = {menunode.id : menunode for menunode in self._menunodes_list}
+        self._menunodes = {menunode.id : menunode for menunode in _menunodes_list}
 
         # validate selection options point to valid menu nodes
-        self.validate_selection_options(self._menunodes_list)
+        self.validate_selection_options(_menunodes_list)
 
         # validate executor type menu nodes point to valid executors
-        self.validate_executor_menu_nodes(self._menunodes_list)
+        self.validate_executor_menu_nodes(_menunodes_list)
 
         # set root node id
         self._rootNodeId = None
-        for menunode in self._menunodes_list:
+        for menunode in _menunodes_list:
             if menunode.is_root:
                 self._rootNodeId = menunode.id
 
         # root node must always have selection options
-        rootNodeSelectionOptions = self.get_menu_node(self._rootNodeId).selection_options
+        rootNodeSelectionOptions = self.get_root_menu_node().selection_options
         if rootNodeSelectionOptions is None or len(rootNodeSelectionOptions)==0:
             raise Exception("Root menu node must have selection options")
 
@@ -170,11 +168,6 @@ class Menus(object):
         with open(menu_nodes_filename, "r") as menunodes_file:
             menunode_data = menunodes_file.read()
             return json.loads(menunode_data, object_hook = MenuNode.as_menu_node)
-
-    def validate_one_root_node(self, menunode_list: List[MenuNode]):
-        roots = [menunode.is_root for menunode in menunode_list]
-        if roots.count(True) != 1:
-            raise Exception("There must be exactly one root node")
 
     def validate_selection_options(self, menunodes: List[MenuNode]):
         for menunode in menunodes:

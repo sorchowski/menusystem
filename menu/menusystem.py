@@ -1,8 +1,9 @@
 from pathlib import Path
 from typing import Callable
+from queue import Queue
 
 from .displays import Display
-from .menuactions import MenuAction
+from .menuaction import MenuAction
 from .menus import Menus, Navigator, MenuNodeType, Executor, MenuDestination
 
 class MenuSystem(object):
@@ -12,11 +13,13 @@ class MenuSystem(object):
                  executorNodesFilename: str,\
                  scriptsPath: Path,\
                  display: Display,\
+                 actionQueue: Queue,
                  menuAction: MenuAction):
 
         self._menus = Menus(menuNodesFilename)
         self._navigator = Navigator(self._menus)
         self._display = display
+        self._actionQueue = actionQueue
         self._menuAction = menuAction
 
         self._executor = Executor(executorNodesFilename, scriptsPath)
@@ -84,27 +87,37 @@ class MenuSystem(object):
     def run(self):
 
         self._action = MenuAction.Action.NONE
+        self.display()
+
+        self._menuAction.start()
+
         while (self._action != MenuAction.Action.QUIT):
 
-            match self._action:
-                case MenuAction.Action.UP:
-                    self._navigator.scroll_up()
-                case MenuAction.Action.DOWN:
-                    self._navigator.scroll_down()
-                case MenuAction.Action.SELECT:
-                    self._navigator.navigate_to_selected_option()
-                case MenuAction.Action.HOME:
-                    self._navigator.home()
+            self._action = self._actionQueue.get(block=True, timeout=None)
 
-            current_node = self._navigator.current_menu_node
+            if (self._action != MenuAction.Action.QUIT):
+                match self._action:
+                    case MenuAction.Action.UP:
+                        self._navigator.scroll_up()
+                    case MenuAction.Action.DOWN:
+                        self._navigator.scroll_down()
+                    case MenuAction.Action.SELECT:
+                        self._navigator.navigate_to_selected_option()
+                    case MenuAction.Action.HOME:
+                        self._navigator.home()
 
-            if current_node.type == MenuNodeType.EXECUTION:
-                self.handle_execution_node(current_node)
+                current_node = self._navigator.current_menu_node
 
-            self.display()
+                if current_node.type == MenuNodeType.EXECUTION:
+                    self.handle_execution_node(current_node)
 
-            self._action = self._menuAction.get_action()
+                self.display()
+
+            self._actionQueue.task_done()
     
+        self._menuAction.stop()
+
     def stop(self):
+        # TODO: this doesn't handle the case where the main loop in 'run' is blocked waiting for a actionQueue return
         self._action = MenuAction.Action.QUIT
 
