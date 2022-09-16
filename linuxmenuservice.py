@@ -2,12 +2,13 @@ from pathlib import Path
 import signal
 from queue import Queue
 
-#from menu.menuactions import KeyboardMenuAction
 from menu.menusystem import MenuSystem
-from menu.displays import BoundedCharacterTerminalDisplay
 
-from menu.rpibuttonmenuaction import RPiButtonBoardMenuAction
-#from menu.displays import Sparkfun4x20LCDDisplay
+#from menu.menuactions import KeyboardMenuAction
+from menu.action.rpibuttonmenuaction import RPiButtonBoardMenuAction
+
+#from menu.display.terminal import BoundedCharacterTerminalDisplay
+from menu.display.sparkfunlcd import Sparkfun4x20LCDDisplay
 
 actionQueue = Queue()
 
@@ -20,7 +21,8 @@ GPIO_PIN_S2 = 38    # GPIO20
 
 menuAction = RPiButtonBoardMenuAction(actionQueue, GPIO_PIN_S1, GPIO_PIN_S2, GPIO_PIN_UP, GPIO_PIN_DOWN, GPIO_PIN_LEFT, GPIO_PIN_RIGHT)
 
-display = BoundedCharacterTerminalDisplay(4, 20, 'ascii')
+#display = BoundedCharacterTerminalDisplay(4, 20, 'ascii')
+display = Sparkfun4x20LCDDisplay()
 
 menuSystem = MenuSystem('menunodes.json', 'executors.json', Path("scripts"), display, actionQueue, menuAction)
 

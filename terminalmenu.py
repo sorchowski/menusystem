@@ -2,8 +2,8 @@ from pathlib import Path
 from queue import Queue
 import signal
 
-from menu.displays import TerminalDisplay
-from menu.keyboardmenuaction import KeyboardMenuAction
+from menu.display.terminal import TerminalDisplay
+from menu.action.keyboardmenuaction import KeyboardMenuAction
 from menu.menusystem import MenuSystem
 
 actionQueue = Queue()

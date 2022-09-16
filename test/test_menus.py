@@ -133,3 +133,6 @@ class TestExecutor(unittest.TestCase):
 
     def test_execute_script(self):
         pass
+
+if __name__ == '__main__':
+    unittest.main()

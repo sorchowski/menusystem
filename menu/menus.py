@@ -1,6 +1,6 @@
 import json
 from typing import List, Callable, Dict
-from enum import Enum, unique, auto
+from enum import Enum, unique
 import subprocess
 from subprocess import CalledProcessError
 from pathlib import Path

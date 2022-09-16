@@ -1,10 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, call
-from parameterized import parameterized
 
 from menu.menus import MenuNode, MenuNodeType, SelectionOption
-from menu.displays import TerminalDisplay
-
+from menu.display.terminal import TerminalDisplay
 
 class TestTerminalDisplay(unittest.TestCase):
 

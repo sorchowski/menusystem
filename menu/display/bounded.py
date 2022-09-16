@@ -1,59 +1,9 @@
-from abc import ABC, abstractmethod
-from doctest import OutputChecker
-from .menus import MenuNode
-from .menus import SelectionOption
 from typing import List
-import platform, os
+import os, platform
 
-class Display(ABC):
-
-    @abstractmethod
-    def display_menu(self, menunode: MenuNode):
-        pass
-
-    @abstractmethod
-    def display_output(self, output: str):
-        pass
-
-    @abstractmethod
-    def clear(self):
-        pass
-
-    @abstractmethod
-    def cleanup(self):
-        pass
-
-class TerminalDisplay(Display):
-
-    # for unit test mocking purposes
-    def _output_data(self, output: str):
-        print(output)
-
-    def display_menu(self, menunode: MenuNode, cursorPos: int):
-        selectionOptions = menunode.selection_options
-        if selectionOptions is None or len(selectionOptions) == 0:
-            raise Exception("Must have selection options to display")
-
-        for pos, selectionOption in enumerate(selectionOptions):
-            if pos==cursorPos:
-                self._output_data("> "+str(pos)+": "+selectionOption.display_name)
-            else:
-                self._output_data("  "+str(pos)+": "+selectionOption.display_name)
-
-    def display_output(self, menunode: MenuNode, output: str):
-        self._output_data(output)
-
-    def clear(self):
-        osSystem = platform.system()
-        if osSystem == 'Windows':
-            os.system('cls')
-        elif osSystem == 'Linux':
-            os.system('clear')
-        else:
-            raise Exception("Unknown os for display clear")
-        
-    def cleanup(self):
-        self.clear()
+from menu.menus import SelectionOption
+from menu.display.display import Display
+from menu.menus import MenuNode
 
 # Not meant for instantiation
 class BoundedCharacterDisplay(Display):
@@ -107,7 +57,6 @@ class BoundedCharacterDisplay(Display):
 
         return rowByteArrays
 
-
 class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
     def __init__(self, rows: int, columns: int, characterEncoding: str):
         super().__init__(rows, columns, characterEncoding)
@@ -115,7 +64,7 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
     def display_menu(self, menunode: MenuNode, cursorPos: int):
 
         selectionOptions = menunode.selection_options
-        if selectionOptions is None or len(selectionOptions) == 0:
+        if not selectionOptions:
             raise Exception("Must have selection options to display")
 
         self.set_window(cursorPos)
@@ -125,7 +74,7 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
             print(row.decode(self._characterEncoding))
 
     def display_output(self, menunode: MenuNode, output: str):
-        if output is None or len(output) == 0:
+        if not output:
             return
 
         displayBuffer = self.prepare_output_display_buffer(output, self._numRows, self._numColumns)
@@ -143,41 +92,3 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
 
     def cleanup(self):
         self.clear()
-
-class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
-    def __init__(self, rows: int, columns: int, characterEncoding: str):
-        super().__init__(rows, columns, characterEncoding)
-
-    def display_menu(self, menunode: MenuNode, cursorPos: int):
-
-        selectionOptions = menunode.selection_options
-        if selectionOptions is None or len(selectionOptions) == 0:
-            raise Exception("Must have selection options to display")
-
-        self.set_window(cursorPos)
-
-        displayBuffer = self.prepare_selection_menu_display_buffer(selectionOptions, self._windowTop, self._windowBottom, cursorPos)
-        for row in displayBuffer:
-
-            print(row.decode(self._characterEncoding))
-            #TODO: send row to lcd display
-            #can we send the whole thing as one giant string?
-
-    def display_output(self, menunode: MenuNode, output: str):
-        if output is None or len(output) == 0:
-            return
-
-        displayBuffer = self.prepare_output_display_buffer(output, self._numRows, self._numColumns)
-        for row in displayBuffer:
-
-            print(row.decode(self._characterEncoding))
-            #TODO: send row to lcd display
-            #can we send the whole thing as one giant string?
-
-    def clear(self):
-        pass
-        # TODO: send command for clearing sparkfun lcd
-
-    def cleanup(self):
-        # TODO: maybe we can write a "goodbye!" to the lcd or something else besides clearing it?
-        self._clear()

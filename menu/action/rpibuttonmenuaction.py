@@ -1,7 +1,9 @@
 from queue import Queue
 import threading
 
-from menu.menuaction import MenuAction
+from menu.action.menuaction import MenuAction
+
+#    sudo pip install RPi.GPIO
 
 import RPi.GPIO as GPIO
 
