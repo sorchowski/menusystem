@@ -42,6 +42,7 @@ class BoundedCharacterDisplay(Display):
                 prepend = '>'
             displayString = prepend+str(selectionNum+1)+": "+option.display_name
             clippedDisplayString = displayString[0:self._numColumns]
+            paddedAndClippedDisplayString = clippedDisplayString.ljust(self._numColumns)
             rowByteArrays.append(bytearray(clippedDisplayString, self._characterEncoding))
 
         return rowByteArrays

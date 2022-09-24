@@ -50,7 +50,7 @@ class RPiButtonBoardMenuAction(MenuAction):
         print("channel type: "+str(type(channel)))
         print("channel value: "+str(channel))
 
-        action = self.map_input_to_action(action)
+        action = self.map_input_to_action(channel)
         self._actionQueue.put(action)
 
     def get_actions(self):

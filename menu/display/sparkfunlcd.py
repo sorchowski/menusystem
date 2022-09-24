@@ -1,5 +1,7 @@
+import time
+from typing import List
 
-from menus import MenuNode
+from menu.menus import MenuNode
 from menu.display.bounded import BoundedCharacterDisplay
 from qwiic_serlcd import QwiicSerlcd
 
@@ -7,50 +9,67 @@ from qwiic_serlcd import QwiicSerlcd
 #    sudo pip install sparkfun-qwiic-serlcd
 
 class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
+
     def __init__(self, rows: int, columns: int, characterEncoding: str):
         super().__init__(rows, columns, characterEncoding)
 
+        self._numRetries = 3
+
+        self._init_lcd()
+
+        self._lcd.setBacklight(0, 0, 0) # black is off
+        self._lcd.setContrast(5)        # set contrast. Lower to 0 for higher contrast.
+        self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well
+        self._lcd.leftToRight()
+        self._lcd.noCursor()            # I think this just removes the blinking cursor
+
+    def _init_lcd(self):
         self._lcd = QwiicSerlcd()
         if self._lcd.connected == False:
             raise Exception("Error starting LCD")
 
-        self._lcd.setBacklight(0, 0, 0) # black is off
-	    self._lcd.setContrast(5)        # set contrast. Lower to 0 for higher contrast.
-        self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well
-        self._lcd.leftToRight()
-	    self._lcd.noCursor()            # I think this just removes the blinking cursor
-
     def display_menu(self, menunode: MenuNode, cursorPos: int):
 
+        self.clear()
+
         selectionOptions = menunode.selection_options
-        if selectionOptions is None or len(selectionOptions) == 0:
+        if not selectionOptions:
             raise Exception("Must have selection options to display")
 
         self.set_window(cursorPos)
 
         displayBuffer = self.prepare_selection_menu_display_buffer(selectionOptions, self._windowTop, self._windowBottom, cursorPos)
-        for row in displayBuffer:
-
-            rowData = row.decode(self._characterEncoding)
-
-            print(rowData)
-            #myLCD.setCursor(column, row) Is this necessary?
-            self._lcd.print(rowData)
-            #can we send the whole thing as one giant string?
+        self._send_data_to_lcd(displayBuffer)
 
     def display_output(self, menunode: MenuNode, output: str):
-        if output is None or len(output) == 0:
+        if not output:
             return
 
         displayBuffer = self.prepare_output_display_buffer(output, self._numRows, self._numColumns)
-        for row in displayBuffer:
+        self._send_data_to_lcd(displayBuffer)
 
-            rowData = row.decode(self._characterEncoding)
+    def _send_data_to_lcd(self, displayBuffer: List):
 
-            print(rowData)
-            #myLCD.setCursor(column, row) Is this necessary?
-            self._lcd.print(rowData)
-            #can we send the whole thing as one giant string?
+        # This is to mitigate i2c connection issues with the lcd device
+        # Every 4-6 button presses and menu updates, the rpi would lose
+        # connectivity with the lcd. If we get a connection exception
+        # restart the lcd and resend the menu commands
+        for n in range(self._numRetries):
+            try:
+                for rowNum, row in enumerate(displayBuffer):
+
+                    rowData = row.decode(self._characterEncoding)
+
+                    self._lcd.setCursor(0, rowNum)
+                    self._lcd.print(rowData)
+
+                return
+
+            except:
+                time.sleep(0.2)
+                self._init_lcd()
+                self.clear()
+
 
     def clear(self):
         self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well

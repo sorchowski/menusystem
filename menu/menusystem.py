@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Callable
 from queue import Queue
 
-from .displays import Display
+from .display.display import Display
 from .action.menuaction import MenuAction
 from .menus import Menus, Navigator, MenuNodeType, Executor, MenuDestination
 
