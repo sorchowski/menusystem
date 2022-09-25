@@ -1,16 +1,24 @@
 from pathlib import Path
 from queue import Queue
-import signal
+import signal, os
 
 from menu.display.terminal import TerminalDisplay
 from menu.action.keyboardmenuaction import KeyboardMenuAction
 from menu.menusystem import MenuSystem
 
+# Get the current location of this script
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 actionQueue = Queue()
 
 keyboardMenuAction = KeyboardMenuAction(actionQueue)
 
-menuSystem = MenuSystem('menunodes.json', 'executors.json', Path("scripts"), TerminalDisplay(), actionQueue, keyboardMenuAction)
+# TODO: need better way for relative path to data
+nodesPath = os.path.join(__location__, '..', 'data', 'menunodes.json')
+executorsPath = os.path.join(__location__, '..', 'data', 'executors.json')
+scriptsPath = os.path.join(__location__, '..', 'data', 'scripts')
+
+menuSystem = MenuSystem(nodesPath, executorsPath, Path(scriptsPath), TerminalDisplay(), actionQueue, keyboardMenuAction)
 
 def handle_terminate(signalNumber, frame):
     print('Got signal to terminate, calling menuSystem.stop and keyboard.stop')

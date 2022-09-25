@@ -1,10 +1,13 @@
 from pathlib import Path
-import signal
+import signal, os
 from queue import Queue
 
 from menu.menusystem import MenuSystem
 from menu.action.rpibuttonmenuaction import RPiButtonBoardMenuAction
 from menu.display.sparkfunlcd import Sparkfun4x20LCDDisplay
+
+# Get the current location of this script
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 actionQueue = Queue()
 
@@ -19,7 +22,12 @@ menuAction = RPiButtonBoardMenuAction(actionQueue, GPIO_PIN_S1, GPIO_PIN_S2, GPI
 
 display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
 
-menuSystem = MenuSystem('menunodes.json', 'executors.json', Path("scripts"), display, actionQueue, menuAction)
+# TODO: need better way for relative path to data
+nodesPath = os.path.join(__location__, '..', 'data', 'menunodes.json')
+executorsPath = os.path.join(__location__, '..', 'data', 'executors.json')
+scriptsPath = os.path.join(__location__, '..', 'data', 'scripts')
+
+menuSystem = MenuSystem(nodesPath, executorsPath, Path(scriptsPath), display, actionQueue, menuAction)
 
 def handle_sigterm(sig, frame):
     menuAction.stop()
