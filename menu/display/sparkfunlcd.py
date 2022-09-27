@@ -76,5 +76,6 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
 
     def cleanup(self):
         # TODO: maybe we can write a "goodbye!" to the lcd or something else besides clearing it?
-        self._clear()
+        self.clear()
         #self._lcd.noDisplay()  Would we also need a call to self._lcd.display() during this object's init?
+

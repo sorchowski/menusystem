@@ -2,7 +2,6 @@
 
 # Place this unit file under:
 #  /etc/systemd/system/
-# Or create a link to it: sudo ln -sf ~/rpimenu.service /etc/systemd/system/rpimenu.service
 
 # $ sudo chown root:root /etc/systemd/system/rpimenu.service
 # $ sudo chmod 644 /etc/systemd/system/rpimenu.service
@@ -17,13 +16,9 @@
 
 # Useful commands:
 
-# List unit files and show only ours
 #  $ systemctl list-unit-files | grep rpimenu.service
-
-# Reload the unit files so any recent changes are reflected in systemd
-#  $ sudo systemctl daemon-reload
-
-#  $ sudo systemctl restart rpi_menu_service
+#  $ systemctl daemon-reload
+#  $ systemctl restart rpi_menu_service
 #  $ systemctl enable rpi_menu_service
 #  $ systemctl start rpi_menu_service
 #  $ systemctl stop rpi_menu_service
@@ -31,12 +26,13 @@
 
 [Unit]
 Description=RPI Menu System
+After=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/python3 path/to/your/rpimenuservice.py
-User=rpi_menu_service
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/lib/python3.10/dist-packages/Simple_Menu_System-0.0.1-py3.10.egg/menuservice/rpimenuservice.py
 Environment=PYTHONUNBUFFERED=1
 KillSignal=SIGTERM
 
 [Install]
-WantedBy=default.target
+WantedBy=custom.target

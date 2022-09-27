@@ -22,10 +22,9 @@ menuAction = RPiButtonBoardMenuAction(actionQueue, GPIO_PIN_S1, GPIO_PIN_S2, GPI
 
 display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
 
-# TODO: need better way for relative path to data
-nodesPath = os.path.join(__location__, '..', 'data', 'menunodes.json')
-executorsPath = os.path.join(__location__, '..', 'data', 'executors.json')
-scriptsPath = os.path.join(__location__, '..', 'data', 'scripts')
+nodesPath = os.path.join(__location__, 'menunodes.json')
+executorsPath = os.path.join(__location__, 'executors.json')
+scriptsPath = os.path.join(__location__, 'scripts')
 
 menuSystem = MenuSystem(nodesPath, executorsPath, Path(scriptsPath), display, actionQueue, menuAction)
 

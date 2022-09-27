@@ -9,6 +9,10 @@ unit tests everywhere!
 add setup.py
     https://setuptools.pypa.io/en/latest/setuptools.html
     https://setuptools.pypa.io/en/latest/userguide/quickstart.html
+
+    add note to setup.py about needing to perform: sudo apt install python-dev-is-python3
+    before running pytho setup.py install
+
 choose oss license
 
 add logging?
@@ -25,6 +29,8 @@ add linux systemd service for menusystem
     https://github.com/torfsen/python-systemd-tutorial
     https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
     https://alexandra-zaharia.github.io/posts/stopping-python-systemd-service-cleanly/
+
+
 
 get scripts working
 

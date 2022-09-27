@@ -9,6 +9,9 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
+
+
 setup(
     name = "Simple Menu System",
     version = "0.0.1",
@@ -18,17 +21,14 @@ setup(
     license = "TODO",
     keywords = "menu raspberrypi lcd button terminal keyboard",
     url = "http://packages.python.org/an_example_pypi_project",
-    packages=['menusystem', 'tests'],
-    data_files=[
-        ('data', ['executors.json','menunodes.json']),
-        ('scripts', ['helloworld.sh','getip.sh'])
-    ]
+    packages=['menu', 'menu.action', 'menu.display', 'menuservice', 'test', 'test.action', 'test.display'],
+    include_package_data=True,
     install_requires = [
         'RPi.GPIO',
         'sparkfun-qwiic-i2c',
         'sparkfun-qwiic-serlcd'
     ],
-    long_description=read('README'),
+    long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",

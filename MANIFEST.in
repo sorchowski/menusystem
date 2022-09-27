@@ -1,0 +1,5 @@
+include menuservice/executors.json
+include menuservice/menunodes.json
+include menuservice/rpimenu.service
+include menuservice/scripts/getip.sh
+include menuservice/scripts/helloworld.sh
