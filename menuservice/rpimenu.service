@@ -35,4 +35,4 @@ Environment=PYTHONUNBUFFERED=1
 KillSignal=SIGTERM
 
 [Install]
-WantedBy=custom.target
+WantedBy=multi-user.target

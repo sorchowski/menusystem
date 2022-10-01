@@ -1,5 +1,5 @@
 from pathlib import Path
-import signal, os
+import signal, os, logging
 from queue import Queue
 
 from menu.menusystem import MenuSystem
@@ -8,6 +8,8 @@ from menu.display.sparkfunlcd import Sparkfun4x20LCDDisplay
 
 # Get the current location of this script
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+logging.basicConfig(filename='/var/log/rpimenuservice.log', level=logging.INFO)
 
 actionQueue = Queue()
 
@@ -29,10 +31,13 @@ scriptsPath = os.path.join(__location__, 'scripts')
 menuSystem = MenuSystem(nodesPath, executorsPath, Path(scriptsPath), display, actionQueue, menuAction)
 
 def handle_sigterm(sig, frame):
+    logging.info('Stopping')
     menuAction.stop()
     menuSystem.stop()
     display.cleanup()
 
 signal.signal(signal.SIGTERM, handle_sigterm)
+
+logging.info('Started')
 
 menuSystem.run()

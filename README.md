@@ -6,33 +6,13 @@ Virtualenv:
 
 unit tests everywhere!
 
-add setup.py
-    https://setuptools.pypa.io/en/latest/setuptools.html
-    https://setuptools.pypa.io/en/latest/userguide/quickstart.html
-
-    add note to setup.py about needing to perform: sudo apt install python-dev-is-python3
-    before running pytho setup.py install
+add note to setup.py about needing to perform: sudo apt install python-dev-is-python3 before running pytho setup.py install
 
 choose oss license
 
-add logging?
+add logging
 
 add try/catch around main menusystem::run() loop for graceful shutdown (or continuous operation?)?
-
-add linux systemd service for menusystem
-    run as alternate user with root permissions, other than root
-    how to run service with sudo access (for rpi buttons)
-    how to set permissions of scripts
-    need to do anything to handle stop service cleanly?
-    How to give main script access to any packages or structure files (i.e. executors.json)
-
-    https://github.com/torfsen/python-systemd-tutorial
-    https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units
-    https://alexandra-zaharia.github.io/posts/stopping-python-systemd-service-cleanly/
-
-
-
-get scripts working
 
 Add README.md
 
@@ -80,4 +60,8 @@ Add README.md
     Future improvements
         Think about adding a timeout to the queue.get() so that the main run method doesn't block forever if the service should stop
         Handle control-c for KeyboardMenuAction
-    
+        Refine setup.py to be compatible with setuptools or run as pip install
+        Add ability to scroll through output of script or method
+        Add ability to return to previous menu (outside of confirmation menu "no") via left button press
+
+

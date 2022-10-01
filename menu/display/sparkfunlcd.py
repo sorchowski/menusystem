@@ -42,6 +42,9 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
         self._send_data_to_lcd(displayBuffer)
 
     def display_output(self, menunode: MenuNode, output: str):
+
+        self.clear()
+
         if not output:
             return
 

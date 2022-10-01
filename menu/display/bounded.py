@@ -1,5 +1,5 @@
 from typing import List
-import os, platform
+import os, platform, logging
 
 from menu.menus import SelectionOption
 from menu.display.display import Display
@@ -47,14 +47,14 @@ class BoundedCharacterDisplay(Display):
 
         return rowByteArrays
 
-    def prepare_output_display_buffer(self, output: str, numRows, numColumns) -> List[bytearray]:
+    def prepare_output_display_buffer(self, output: bytearray, numRows, numColumns) -> List[bytearray]:
 
         rowByteArrays = []
         splitNum = numColumns
         rows = [output[i:i+splitNum] for i in range(0, len(output), splitNum)]
         numToOutput = min(len(rows), numRows)
         for rowNum in range(numToOutput):
-            rowByteArrays.append(bytearray(rows[rowNum], self._characterEncoding))
+            rowByteArrays.append(rows[rowNum])
 
         return rowByteArrays
 

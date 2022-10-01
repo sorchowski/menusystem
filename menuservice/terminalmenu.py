@@ -13,10 +13,9 @@ actionQueue = Queue()
 
 keyboardMenuAction = KeyboardMenuAction(actionQueue)
 
-# TODO: need better way for relative path to data
-nodesPath = os.path.join(__location__, '..', 'data', 'menunodes.json')
-executorsPath = os.path.join(__location__, '..', 'data', 'executors.json')
-scriptsPath = os.path.join(__location__, '..', 'data', 'scripts')
+nodesPath = os.path.join(__location__, 'menunodes.json')
+executorsPath = os.path.join(__location__, 'executors.json')
+scriptsPath = os.path.join(__location__, 'scripts')
 
 menuSystem = MenuSystem(nodesPath, executorsPath, Path(scriptsPath), TerminalDisplay(), actionQueue, keyboardMenuAction)
 

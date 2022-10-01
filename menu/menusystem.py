@@ -50,7 +50,6 @@ class MenuSystem(object):
 
     def display(self):
         current_node = self._navigator.current_menu_node
-
         match current_node.type:
 
             case MenuNodeType.SELECTION:
@@ -83,6 +82,7 @@ class MenuSystem(object):
                 self._navigator.navigate_to_post_execute_output()
             else:
                 self._navigator.home()
+
 
     def run(self):
 

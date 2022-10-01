@@ -1,4 +1,4 @@
-import json
+import json, logging
 from typing import List, Callable, Dict
 from enum import Enum, unique
 import subprocess
@@ -280,6 +280,7 @@ class Executor(object):
     def register_method(self, method: Callable):
         methodName = method.__name__
         print("SEO: registered methodName: "+str(methodName))
+        logging.info("Registered method name: "+str(methodName))
         self._methods[methodName] = method
 
     def execute(self, executorNodeId: str, **kwargs) -> ExecutionResult:
@@ -297,11 +298,13 @@ class Executor(object):
         postExecuteMenuDestination = executorNode.destination if executorNode.destination is not None else MenuDestination.HOME
         scriptName = executorNode.name
         scriptToExecute = str((self._scriptsLocation / scriptName).resolve())
-        print("executing script: "+scriptToExecute)
+        logging.info("Executing script: "+scriptToExecute)
         try:
             output = subprocess.check_output([scriptToExecute])
+            logging.info("Output from script: "+str(output))
             return Executor.ExecutionResult(output, 0, postExecuteMenuDestination)
         except (CalledProcessError, OSError) as e:
+            logging.error("Error executing script: "+str(e))
             return Executor.ExecutionResult("Error executing script", 1, MenuDestination.POST_EXECUTE_OUTPUT)
 
     def _execute_method(self, executorNode: ExecutorNode, **kwargs) -> ExecutionResult:

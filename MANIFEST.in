@@ -3,3 +3,7 @@ include menuservice/menunodes.json
 include menuservice/rpimenu.service
 include menuservice/scripts/getip.sh
 include menuservice/scripts/helloworld.sh
+include menuservice/scripts/lightmeup.sh
+include menuservice/scripts/lightmedown.sh
+include menuservice/scripts/lightmeup.py
+include menuservice/scripts/lightmedown.py

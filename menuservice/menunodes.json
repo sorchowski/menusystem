@@ -83,11 +83,11 @@
             },
             {
                 "menuNodeId": "6Z9B0H",
-                "displayName": "Sub Menu Option 4"
+                "displayName": "Light Me Up!"
             },
             {
                 "menuNodeId": "D8SUTB",
-                "displayName": "Sub Menu Option 5"
+                "displayName": "Light Me Down!"
             },
             {
                 "menuNodeId": "CSYC82",
@@ -114,12 +114,12 @@
     {
         "_id_": "6Z9B0H",
         "type": "execution",
-        "executorNodeId": "ER5KI5"
+        "executorNodeId": "LIGHTON"
     },
     {
         "_id_": "D8SUTB",
         "type": "execution",
-        "executorNodeId": "ER5KI5"
+        "executorNodeId": "LIGHTOFF"
     },
     {
         "_id_": "CSYC82",
