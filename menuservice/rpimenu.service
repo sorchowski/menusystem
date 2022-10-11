@@ -1,5 +1,3 @@
-# https://github.com/torfsen/python-systemd-tutorial
-
 # Place this unit file under:
 #  /etc/systemd/system/
 
@@ -10,9 +8,6 @@
 #  /usr/local/lib/rpi_menu_service/
 # $ sudo chown root:root /usr/local/lib/rpi_menu_service/<menu service script name>
 # $ sudo chmod 644 /usr/local/lib/rpi_menu_service/<menu service script name>
-
-# Creating a service user
-# $ sudo useradd -r -s /bin/false rpi_menu_service
 
 # Useful commands:
 

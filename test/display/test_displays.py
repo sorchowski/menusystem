@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call
 
 from menu.menus import MenuNode, MenuNodeType, SelectionOption
 from menu.display.terminal import TerminalDisplay
+from menu.display.bounded import BoundedCharacterDisplay
 
 class TestTerminalDisplay(unittest.TestCase):
 
@@ -35,15 +36,38 @@ class TestTerminalDisplay(unittest.TestCase):
 
 class TestBoundedCharacterDisplay(unittest.TestCase):
 
+    def setUp(self):
+        self._boundedDisplay = BoundedCharacterDisplay(numRows=4, numColumns=20, characterEncoding='ascii')
+
+    def test_init_exception_rows(self):
+        with self.assertRaises(Exception) as ecm:
+            boundedDisplay = BoundedCharacterDisplay(numRows=0, numColumns=20, characterEncoding='ascii')
+
+        actualException = ecm.exception
+        self.assertEquals(str(actualException), 'Number of rows must be greater than zero')
+
+    def test_init_exception_columns(self):
+        with self.assertRaises(Exception) as ecm:
+            boundedDisplay = BoundedCharacterDisplay(numRows=4, numColumns=0, characterEncoding='ascii')
+
+        actualException = ecm.exception
+        self.assertEquals(str(actualException), 'Number of columns must be greater than zero')
+
     def test_prepare_selection_menu_display_buffer(self):
-        #TODO
-        # prepare_selection_menu_display_buffer(self, selectionOptions: List[SelectionOption], windowTop: int, windowBottom: int, cursorPos: int) -> List[bytearray]:
-        pass
+        selectionOptions = [SelectionOption("id1", "Option 1"), SelectionOption("id2", "Option 2"), SelectionOption("id3", "Option 3"), SelectionOption("id4", "Option 4"), SelectionOption("id5", "Option 5")]
+
+        rowByteArrays = self._boundedDisplay.prepare_selection_menu_display_buffer(selectionOptions, windowTop=0, windowBottom=3, cursorPos=0)
+
+        self.assertEqual(4, len(rowByteArrays))
 
     def test_prepare_output_display_buffer(self):
-        #TODO
-        # prepare_output_display_buffer(self, output: str, numRows, numColumns) -> List[bytearray]:
-        pass
+        
+        output = bytearray("01234567890123456789012345678900123456789", 'ascii')
+        numRows = 4
+        numColumns = 20
+
+        rowByteArrays = self._boundedDisplay.prepare_output_display_buffer(output, numRows, numColumns)
+        print("SEO"+str(rowByteArrays))
 
     def test_set_window(self):
         #TODO

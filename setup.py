@@ -10,8 +10,6 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-
-
 setup(
     name = "Simple Menu System",
     version = "0.0.1",

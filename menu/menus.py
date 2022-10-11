@@ -9,6 +9,7 @@ from pathlib import Path
 
 def check_for_duplicates(dlist):
     if len(dlist) != len(set(dlist)):
+        logging.error("Duplicates found")
         raise Exception("Duplicates found")
 
 @unique
@@ -156,6 +157,7 @@ class Menus(object):
         # root node must always have selection options
         rootNodeSelectionOptions = self.get_root_menu_node().selection_options
         if rootNodeSelectionOptions is None or len(rootNodeSelectionOptions)==0:
+            logging.error("Root menu node must have selection options")
             raise Exception("Root menu node must have selection options")
 
     def get_menu_node(self, menuNodeId: str) -> MenuNode:
@@ -174,6 +176,7 @@ class Menus(object):
             if menunode.selection_options is not None:
                 for selectionOption in menunode.selection_options:
                     if selectionOption.id not in self._menunodes.keys():
+                        logging.error("Selection Option must have valid menu node id: "+selectionOption.id)
                         raise Exception("Selection Option must have valid menu node id "+selectionOption.id)
 
     def validate_executor_menu_nodes(self, menunodes: List[MenuNode]):
@@ -181,6 +184,7 @@ class Menus(object):
             if menunode.type == MenuNodeType.EXECUTION:
                 executorNodeId = menunode.executor_id
                 if executorNodeId is None:
+                    logging.error("Execution type menu nodes must have an executor node id. menu node id: "+menunode.id)
                     raise Exception("Execution type menu nodes must have an executor node id")
 
 
@@ -279,7 +283,6 @@ class Executor(object):
 
     def register_method(self, method: Callable):
         methodName = method.__name__
-        print("SEO: registered methodName: "+str(methodName))
         logging.info("Registered method name: "+str(methodName))
         self._methods[methodName] = method
 
@@ -292,6 +295,7 @@ class Executor(object):
         elif executorNode.executor_type == ExecutorNodeType.METHOD:
             return self._execute_method(executorNode, **kwargs)
         else:
+            logging.error("Unsupported execution type "+str(executorNode.executor_type))
             raise Exception("Unsupported execution type")
 
     def _execute_script(self, executorNode: ExecutorNode, **kwargs) -> ExecutionResult:
@@ -311,12 +315,14 @@ class Executor(object):
         postExecuteMenuDestination = executorNode.destination if executorNode.destination is not None else MenuDestination.HOME
         methodName = executorNode.name
         if methodName not in self._methods:
+            logging.error("Method name not registered in executor: "+methodName)
             raise Exception("Method name not registered in executor!")
         method = self._methods[methodName]
         try:
             executionResult = method(**kwargs)
             return Executor.ExecutionResult("Executed method "+methodName, 0, postExecuteMenuDestination) if executionResult is None else executionResult
-        except:
+        except Exception as e:
+            logging.error("Error executing method: "+str(e))
             return Executor.ExecutionResult("Error executing method "+methodName, 1, MenuDestination.POST_EXECUTE_OUTPUT)
 
 

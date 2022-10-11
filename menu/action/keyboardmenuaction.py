@@ -1,4 +1,4 @@
-import threading
+import threading, logging
 from queue import Queue
 from .menuaction import MenuAction
 
@@ -20,6 +20,7 @@ class KeyboardMenuAction(MenuAction):
 
         while not self._exitEvent.is_set():
             charVal = self.get_input()
+            logging.info("Got character input: "+str(charVal))
             action = self.map_input_to_action(charVal)
             self._actionQueue.put(action)
             if action == MenuAction.Action.QUIT:
@@ -28,10 +29,12 @@ class KeyboardMenuAction(MenuAction):
                 self._actionQueue.join() #Wait for the menu to process and update display
 
     def start(self):
+        logging.info("Keyboard Menu Action starting")
         self._actionThread = threading.Thread(target=self.get_actions)
         self._actionThread.start()
 
     def stop(self):
+        logging.info("Keyboard Menu Action stopping")
         self._actionQueue.put(MenuAction.Action.QUIT) #TODO: check if this is necessary
         self._exitEvent.set()
         self._actionThread.join()

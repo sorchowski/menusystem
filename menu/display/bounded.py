@@ -10,9 +10,11 @@ class BoundedCharacterDisplay(Display):
     def __init__(self, numRows: int, numColumns: int, characterEncoding: str):
         self._numRows = numRows
         if (numRows == 0):
+            logging.error("Number of rows must be greater than zero")
             raise Exception("Number of rows must be greater than zero")
         self._numColumns = numColumns
         if (numColumns == 0):
+            logging.error("Number of columns must be greater than zero")
             raise Exception("Number of columns must be greater than zero")
         self._characterEncoding = characterEncoding
         self.set_window(0)
@@ -34,7 +36,7 @@ class BoundedCharacterDisplay(Display):
 
         rowByteArrays = []
 
-        for selOption in windowOptions[self._windowTop:self._windowBottom+1]:
+        for selOption in windowOptions[windowTop:windowBottom+1]:
             selectionNum = selOption[0]
             option = selOption[1]
             prepend = ' '
@@ -43,7 +45,7 @@ class BoundedCharacterDisplay(Display):
             displayString = prepend+str(selectionNum+1)+": "+option.display_name
             clippedDisplayString = displayString[0:self._numColumns]
             paddedAndClippedDisplayString = clippedDisplayString.ljust(self._numColumns)
-            rowByteArrays.append(bytearray(clippedDisplayString, self._characterEncoding))
+            rowByteArrays.append(bytearray(paddedAndClippedDisplayString, self._characterEncoding))
 
         return rowByteArrays
 
@@ -66,6 +68,7 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
 
         selectionOptions = menunode.selection_options
         if not selectionOptions:
+            logging.error("Must have selection options to display menu")
             raise Exception("Must have selection options to display")
 
         self.set_window(cursorPos)

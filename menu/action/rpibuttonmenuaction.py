@@ -1,5 +1,5 @@
 from queue import Queue
-import threading
+import logging
 
 from menu.action.menuaction import MenuAction
 
@@ -47,9 +47,7 @@ class RPiButtonBoardMenuAction(MenuAction):
 
 
     def button_press(self, channel):
-        print("channel type: "+str(type(channel)))
-        print("channel value: "+str(channel))
-
+        logging.info("Button pressed: "+str(channel))
         action = self.map_input_to_action(channel)
         self._actionQueue.put(action)
 

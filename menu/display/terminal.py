@@ -1,4 +1,4 @@
-import platform, os
+import platform, os, logging
 
 from menu.display.display import Display
 from menu.menus import MenuNode
@@ -12,6 +12,7 @@ class TerminalDisplay(Display):
     def display_menu(self, menunode: MenuNode, cursorPos: int):
         selectionOptions = menunode.selection_options
         if not selectionOptions:
+            logging.error("Must have selection options to display")
             raise Exception("Must have selection options to display")
 
         for pos, selectionOption in enumerate(selectionOptions):

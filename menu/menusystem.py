@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Callable
 from queue import Queue
@@ -43,9 +44,9 @@ class MenuSystem(object):
         try:
             executorNodeId = kwargs['savedExecutorNodeId']
             executor = kwargs['executor']
-            print("SEO: savedExecutorNodeId: "+executorNodeId)
             return executor.execute(executorNodeId, **kwargs)
         except KeyError as ex:
+            logging.error("Missing required kwargs in handle_confirmation_yes()")
             raise Exception("missing required kwargs value: "+ex.args[0])
 
     def display(self):
@@ -118,6 +119,7 @@ class MenuSystem(object):
         self._menuAction.stop()
 
     def stop(self):
+        logging.info("Menusystem::stop")
         # TODO: this doesn't handle the case where the main loop in 'run' is blocked waiting for a actionQueue return
         self._action = MenuAction.Action.QUIT
 

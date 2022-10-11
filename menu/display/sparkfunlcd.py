@@ -1,4 +1,4 @@
-import time
+import time, logging
 from typing import List
 
 from menu.menus import MenuNode
@@ -15,17 +15,28 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
 
         self._numRetries = 3
 
-        self._init_lcd()
+        for n in range(self._numRetries):
+            try:
+                self._init_lcd()
 
-        self._lcd.setBacklight(0, 0, 0) # black is off
-        self._lcd.setContrast(5)        # set contrast. Lower to 0 for higher contrast.
-        self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well
-        self._lcd.leftToRight()
-        self._lcd.noCursor()            # I think this just removes the blinking cursor
+                self._lcd.setBacklight(0, 0, 0) # black is off
+                self._lcd.setContrast(5)        # set contrast. Lower to 0 for higher contrast.
+                self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well
+                self._lcd.leftToRight()
+                self._lcd.noCursor()            # I think this just removes the blinking cursor
+
+                return
+            except Exception as e:
+                logging.error("Error initializing lcd: "+str(e))
+                time.sleep(0.2)
+
+        logging.error("Unable to initialize LCD")
+        raise Exception("Unable to initialize LCD")
 
     def _init_lcd(self):
         self._lcd = QwiicSerlcd()
         if self._lcd.connected == False:
+            logging.error("Error starting LCD")
             raise Exception("Error starting LCD")
 
     def display_menu(self, menunode: MenuNode, cursorPos: int):
@@ -34,6 +45,7 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
 
         selectionOptions = menunode.selection_options
         if not selectionOptions:
+            logging.error("Must have selection options to display")
             raise Exception("Must have selection options to display")
 
         self.set_window(cursorPos)
@@ -73,6 +85,7 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
                 self._init_lcd()
                 self.clear()
 
+        logging.error("Unable to send data to LCD")
 
     def clear(self):
         self._lcd.clearScreen()         # clear the screen - this moves the cursor to the home position as well
@@ -80,5 +93,4 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
     def cleanup(self):
         # TODO: maybe we can write a "goodbye!" to the lcd or something else besides clearing it?
         self.clear()
-        #self._lcd.noDisplay()  Would we also need a call to self._lcd.display() during this object's init?
 
