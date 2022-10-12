@@ -64,6 +64,10 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
     def __init__(self, rows: int, columns: int, characterEncoding: str):
         super().__init__(rows, columns, characterEncoding)
 
+    # for unit test mocking purposes
+    def _output_data(self, output: str):
+        print(output)
+
     def display_menu(self, menunode: MenuNode, cursorPos: int):
 
         selectionOptions = menunode.selection_options
@@ -75,7 +79,7 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
 
         displayBuffer = self.prepare_selection_menu_display_buffer(selectionOptions, self._windowTop, self._windowBottom, cursorPos)
         for row in displayBuffer:
-            print(row.decode(self._characterEncoding))
+            self._output_data(row.decode(self._characterEncoding))
 
     def display_output(self, menunode: MenuNode, output: str):
         if not output:
@@ -83,7 +87,7 @@ class BoundedCharacterTerminalDisplay(BoundedCharacterDisplay):
 
         displayBuffer = self.prepare_output_display_buffer(output, self._numRows, self._numColumns)
         for row in displayBuffer:
-            print(row.decode(self._characterEncoding))
+            self._output_data(row.decode(self._characterEncoding))
 
     def clear(self):
         osSystem = platform.system()

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, call
 
 from menu.menus import MenuNode, MenuNodeType, SelectionOption
 from menu.display.terminal import TerminalDisplay
-from menu.display.bounded import BoundedCharacterDisplay
+from menu.display.bounded import BoundedCharacterTerminalDisplay
 
 class TestTerminalDisplay(unittest.TestCase):
 
@@ -34,21 +34,21 @@ class TestTerminalDisplay(unittest.TestCase):
         self._terminalDisplay._output_data.assert_has_calls(calls)
 
 
-class TestBoundedCharacterDisplay(unittest.TestCase):
+class TestBoundedCharacterTerminalDisplay(unittest.TestCase):
 
     def setUp(self):
-        self._boundedDisplay = BoundedCharacterDisplay(numRows=4, numColumns=20, characterEncoding='ascii')
+        self._boundedDisplay = BoundedCharacterTerminalDisplay(rows=4, columns=20, characterEncoding='ascii')
 
     def test_init_exception_rows(self):
         with self.assertRaises(Exception) as ecm:
-            boundedDisplay = BoundedCharacterDisplay(numRows=0, numColumns=20, characterEncoding='ascii')
+            boundedDisplay = BoundedCharacterTerminalDisplay(rows=0, columns=20, characterEncoding='ascii')
 
         actualException = ecm.exception
         self.assertEquals(str(actualException), 'Number of rows must be greater than zero')
 
     def test_init_exception_columns(self):
         with self.assertRaises(Exception) as ecm:
-            boundedDisplay = BoundedCharacterDisplay(numRows=4, numColumns=0, characterEncoding='ascii')
+            boundedDisplay = BoundedCharacterTerminalDisplay(rows=4, columns=0, characterEncoding='ascii')
 
         actualException = ecm.exception
         self.assertEquals(str(actualException), 'Number of columns must be greater than zero')
@@ -59,39 +59,65 @@ class TestBoundedCharacterDisplay(unittest.TestCase):
         rowByteArrays = self._boundedDisplay.prepare_selection_menu_display_buffer(selectionOptions, windowTop=0, windowBottom=3, cursorPos=0)
 
         self.assertEqual(4, len(rowByteArrays))
+        self.assertEqual(rowByteArrays[0].decode(), '>1: Option 1        ')
+        self.assertEqual(rowByteArrays[1].decode(), ' 2: Option 2        ')
+        self.assertEqual(rowByteArrays[2].decode(), ' 3: Option 3        ')
+        self.assertEqual(rowByteArrays[3].decode(), ' 4: Option 4        ')
 
     def test_prepare_output_display_buffer(self):
         
-        output = bytearray("01234567890123456789012345678900123456789", 'ascii')
+        output = bytearray("01234567890123456789012345678901234567890", 'ascii')
         numRows = 4
         numColumns = 20
 
         rowByteArrays = self._boundedDisplay.prepare_output_display_buffer(output, numRows, numColumns)
-        print("SEO"+str(rowByteArrays))
 
-    def test_set_window(self):
-        #TODO
-        # Should we test this if set_window() only modifies 'private' attributes?
-        pass
-
-class TestBoundedCharacterTerminalDisplay(unittest.TestCase):
-
-    def test_exception_num_rows_zero(self):
-        #TODO
-        pass
-    
-    def test_exception_num_columns_zero(self):
-        #TODO
-        pass
+        self.assertEqual(3, len(rowByteArrays))
+        self.assertEqual(rowByteArrays[0].decode(), '01234567890123456789')
+        self.assertEqual(rowByteArrays[1].decode(), '01234567890123456789')
+        self.assertEqual(rowByteArrays[2].decode(), '0')
 
     def test_display_menu_exception(self):
-        #TODO
-        pass
+ 
+        menuNode = MenuNode(id='', menuNodeType=None, selectionOptions=None, confirm=False, executorNodeId=None, isRoot=False)
+
+        with self.assertRaises(Exception) as ecm:        
+            self._boundedDisplay.display_menu(menuNode, 0)
+
+        actualException = ecm.exception
+        self.assertEqual(str(actualException), "Must have selection options to display")
 
     def test_display_output_not_called(self):
-        #TODO
-        # prepare_output_display_buffer  NOT called?
-        pass
+
+        menuNode = MenuNode(id='', menuNodeType=None, selectionOptions=None, confirm=False, executorNodeId=None, isRoot=False)
+        self._boundedDisplay._output_data = MagicMock()
+
+        self._boundedDisplay.display_output(menuNode, None)
+        self._boundedDisplay._output_data.assert_not_called()
+
+    def test_display_menu(self):
+
+        selectionOptions = [SelectionOption("id1", "Option 1"), SelectionOption("id2", "Option 2"), SelectionOption("id3", "Option 3"), SelectionOption("id4", "Option 4"), SelectionOption("id5", "Option 5")]
+        menuNode = MenuNode(id='', menuNodeType=None, selectionOptions=selectionOptions, confirm=False, executorNodeId=None, isRoot=False)
+
+        self._boundedDisplay._output_data = MagicMock()
+        self._boundedDisplay.display_menu(menuNode, 1)
+
+        calls = [call(' 1: Option 1        '), call('>2: Option 2        '), call(' 3: Option 3        '), call(' 4: Option 4        ')]
+        self._boundedDisplay._output_data.assert_has_calls(calls)
+
+    def test_display_output(self):
+
+        output = bytearray("01234567890123456789012345678901234567890", 'ascii')
+        numRows = 4
+        numColumns = 20
+
+        self._boundedDisplay._output_data = MagicMock()
+        calls = [call('01234567890123456789'), call('01234567890123456789'), call('0')]
+
+        self._boundedDisplay.display_output(None, output) 
+        self._boundedDisplay._output_data.assert_has_calls(calls)
+
 
 if __name__ == '__main__':
     unittest.main()
