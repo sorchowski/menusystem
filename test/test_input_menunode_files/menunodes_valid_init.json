@@ -1,5 +1,19 @@
 [
     {
+        "_id_": "CONFIRMATION",
+        "type": "selection",
+        "selectionOptions": [
+            {
+                "menuNodeId": "YES",
+                "displayName": "Yes"
+            },
+            {
+                "menuNodeId": "NO",
+                "displayName": "No"
+            }
+        ]
+    },
+    {
         "_id_": "ROOT",
         "type": "selection",
         "selectionOptions": [
@@ -16,11 +30,26 @@
     {
         "_id_": "YUAD5J",
         "type": "execution",
+        "confirm": true,
         "executorNodeId": "ER5KI5"
     },
     {
         "_id_": "LAKMYC",
         "type": "execution",
         "executorNodeId": "DZPWJB"
+    },
+    {
+        "_id_": "YES",
+        "type": "execution",
+        "executorNodeId": "YES"
+    },
+    {
+        "_id_": "NO",
+        "type": "execution",
+        "executorNodeId": "NO"
+    },
+    {
+        "_id_": "OUTPUT",
+        "type": "output"
     }
 ]

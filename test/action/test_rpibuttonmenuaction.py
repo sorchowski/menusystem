@@ -6,9 +6,8 @@
 
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, MagicMock, patch
 from parameterized import parameterized
-from queue import Queue
 
 from menu.action.menuaction import MenuAction
 from menu.action.rpibuttonmenuaction import RPiButtonBoardMenuAction
@@ -36,6 +35,11 @@ class TestKeyboardMenuActions(unittest.TestCase):
         (GPIO_PIN_RIGHT, MenuAction.Action.SELECT),
         (GPIO_PIN_S1, MenuAction.Action.HOME)
     ])
+    @patch.multiple('RPi.GPIO',
+        setmode=MagicMock(return_value=None),
+        setup=MagicMock(return_value=None),
+        add_event_detect=MagicMock(return_value=None),
+        cleanup=MagicMock(return_value=None))
     def test_map_input_to_action(self, inputValue, expectedAction: MenuAction.Action):
         actionQueue = Mock()
         rpiButtonMA = RPiButtonBoardMenuAction(actionQueue, s1Pin, s2Pin, upPin, downPin, leftPin, rightPin)

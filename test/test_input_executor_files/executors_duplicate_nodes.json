@@ -1,0 +1,19 @@
+[
+    {
+        "_id_": "YES",
+        "type": "method",
+        "name": "handle_confirmation_yes"
+    },
+    {
+        "_id_": "YES",
+        "type": "method",
+        "name": "handle_confirmation_no",
+        "destinationOverride": "lastSelectOptionMenu"
+    },
+    {
+        "_id_": "ER5KI5",
+        "type": "script",
+        "name": "helloworld.sh",
+        "destinationOverride": "postExecuteOutput"
+    }
+]

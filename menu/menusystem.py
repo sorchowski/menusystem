@@ -1,29 +1,28 @@
 import logging
-from pathlib import Path
 from typing import Callable
 from queue import Queue
 
 from .display.display import Display
 from .action.menuaction import MenuAction
-from .menus import Menus, Navigator, MenuNodeType, Executor, MenuDestination
+from .menus import Menus, MenuNode, Navigator, MenuNodeType, Executor, MenuDestination
 
 class MenuSystem(object):
 
     def __init__(self,
-                 menuNodesFilename: str,\
-                 executorNodesFilename: str,\
-                 scriptsPath: Path,\
+                 menus: Menus,\
+                 executor: Executor,\
+                 navigator: Navigator,\
                  display: Display,\
                  actionQueue: Queue,
                  menuAction: MenuAction):
 
-        self._menus = Menus(menuNodesFilename)
-        self._navigator = Navigator(self._menus)
+        self._menus = menus
+        self._navigator = navigator
         self._display = display
         self._actionQueue = actionQueue
         self._menuAction = menuAction
 
-        self._executor = Executor(executorNodesFilename, scriptsPath)
+        self._executor = executor
         self._executor.register_method(self.handle_confirmation_no)
         self._executor.register_method(self.handle_confirmation_yes)
 
@@ -50,7 +49,9 @@ class MenuSystem(object):
             raise Exception("missing required kwargs value: "+ex.args[0])
 
     def display(self):
+
         current_node = self._navigator.current_menu_node
+
         match current_node.type:
 
             case MenuNodeType.SELECTION:
@@ -62,7 +63,9 @@ class MenuSystem(object):
                 output=self._executionResult.output
                 self._display.display_output(current_node, output)
 
-    def handle_execution_node(self, executionNode):
+            #TODO: case _: Raise exception for unsupported meny type?
+
+    def handle_execution_node(self, executionNode: MenuNode):
 
         self._executionResult = None
 

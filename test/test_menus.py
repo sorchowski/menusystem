@@ -1,10 +1,12 @@
 import unittest
 from unittest.mock import patch
-from parameterized import parameterized
+
+from pathlib import Path
 
 from menu.menus import SelectionOption
 from menu.menus import MenuDestination, ExecutorNode, ExecutorNodeType
 from menu.menus import Menus, MenuNode, MenuNodeType
+from menu.menus import Navigator, Executor
 
 class TestSelectionOption(unittest.TestCase):
 
@@ -117,22 +119,142 @@ class TestMenu(unittest.TestCase):
 
 class TestNavigator(unittest.TestCase):
 
-    def test_home(self):
-        pass
+    def test_current_menu_node(self):
 
-    # TODO: all other methods
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+        menuNode = navigator.current_menu_node
+        self.assertEqual(menuNode.id, "ROOT")
+
+    def test_cursor_position(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+        self.assertEqual(navigator.cursor_position, 0)
+
+    def test_home(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+        navigator.home()
+
+        self.assertEqual(navigator.cursor_position, 0)
+        menuNode = navigator.current_menu_node
+        self.assertEqual(menuNode.id, "ROOT")
+
+    def test_scroll_up(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        navigator.scroll_up()
+        self.assertEqual(navigator.cursor_position, 0)
+        navigator.scroll_down()
+        navigator.scroll_down()
+        navigator.scroll_up()
+        self.assertEqual(navigator.cursor_position, 0)
+
+    def test_scroll_down(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        navigator.scroll_down()
+        self.assertEqual(navigator.cursor_position, 1)
+        navigator.scroll_down()
+        self.assertEqual(navigator.cursor_position, 1)
+
+    def navigate_to_selected_option(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        navigator.navigate_to_selected_option()
+        menuNode = navigator.current_menu_node
+        self.assertEqual(menuNode.id, "YUAD5J")
+
+    def navigate_to_confirmation_menu(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        navigator.navigate_to_selected_option()
+        menuNode = navigator.current_menu_node
+        self.assertEqual(menuNode.id, "YUAD5J")
+        navigator.navigate_to_confirmation_menu()
+        self.assertEqual(navigator.current_menu_node.id, "CONFIRMATION")
+
+    def navigate_to_last_selection_menu(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        # first selection option is a confirm menu option
+        navigator.navigate_to_selected_option()
+        menuNode = navigator.current_menu_node
+        self.assertEqual(menuNode.id, "YUAD5J")
+        navigator.navigate_to_confirmation_menu()
+        self.assertEqual(navigator.current_menu_node.id, "CONFIRMATION")
+        navigator.navigate_to_last_selection_menu()
+        self.assertEqual(navigator.current_menu_node.id, "ROOT")
+
+    def navigate_to_post_execute_output(self):
+
+        menus = Menus("test/test_input_menunode_files/menunodes_valid_init.json")
+        navigator = Navigator(menus)
+
+        navigator.navigate_to_post_execute_output()
+
+        self.assertEqual(navigator.cursor_position, None)
+        self.assertEqual(navigator.current_menu_node.id, "OUTPUT")
+        self.assertEqual(navigator.current_menu_node.selection_options, None)
 
 
 class TestExecutor(unittest.TestCase):
 
-    def test_register_method(self):
-        pass
+    def test_init_valid(self):
+
+        executor = Executor("test/test_input_executor_files/executors_valid_init.json", Path("test-path"))
+
+    def test_init_invalid(self):
+
+        with self.assertRaises(Exception) as ecm:
+            executor = Executor("test/test_input_executor_files/executors_duplicate_nodes.json", Path("test-path"))
+
+        actualException = ecm.exception
+        self.assertEqual(str(actualException), "Duplicates found")
+
+    def test_execute_unsupported(self):
+
+        executor = Executor("test/test_input_executor_files/executors_valid_init.json", Path("test-path"))
+        testExecutorNode = ExecutorNode("id", None, None, None)
+        executor._executors["id"] = testExecutorNode
+        with self.assertRaises(Exception) as ecm:
+            executor.execute("id", tempArg1="1", tempArg2="2")
+        actualException = ecm.exception
+        self.assertEqual(str(actualException), "Unsupported execution type")
+
+
+    @staticmethod
+    def handle_confirmation_no(**kwargs) -> Executor.ExecutionResult:
+        return Executor.ExecutionResult(output="test-method-output", returnCode=0, postExecuteMenuDestination=MenuDestination.LAST_SELECT_OPTION_MENU)
 
     def test_execute_method(self):
-        pass
 
-    def test_execute_script(self):
-        pass
+        executor = Executor("test/test_input_executor_files/executors_valid_init.json", Path("test-path"))
+        executor.register_method(self.handle_confirmation_no)
+        executionResult = executor.execute("NO", tempArg1="tempArg1")
+        self.assertEqual(executionResult.output, "test-method-output")
+        self.assertEqual(executionResult.return_code, 0)
+        self.assertEqual(executionResult.destination, MenuDestination.LAST_SELECT_OPTION_MENU)
+
+    @patch('subprocess.check_output', return_value="test-output")
+    def test_execute_script(self, mockCheckOutputMethod):
+
+        executor = Executor("test/test_input_executor_files/executors_valid_init.json", Path("test-path"))
+        executionResult = executor.execute("ER5KI5")
+        self.assertEqual(executionResult.output, "test-output")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,9 +1,10 @@
 import unittest
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, call, patch
 
-from menu.menus import MenuNode, MenuNodeType, SelectionOption
+from menu.menus import MenuNode, MenuNodeType, SelectionOption, MenuDestination
 from menu.display.terminal import TerminalDisplay
 from menu.display.bounded import BoundedCharacterTerminalDisplay
+from menu.display.sparkfunlcd import Sparkfun4x20LCDDisplay
 
 class TestTerminalDisplay(unittest.TestCase):
 
@@ -41,17 +42,17 @@ class TestBoundedCharacterTerminalDisplay(unittest.TestCase):
 
     def test_init_exception_rows(self):
         with self.assertRaises(Exception) as ecm:
-            boundedDisplay = BoundedCharacterTerminalDisplay(rows=0, columns=20, characterEncoding='ascii')
+            BoundedCharacterTerminalDisplay(rows=0, columns=20, characterEncoding='ascii')
 
         actualException = ecm.exception
-        self.assertEquals(str(actualException), 'Number of rows must be greater than zero')
+        self.assertEqual(str(actualException), 'Number of rows must be greater than zero')
 
     def test_init_exception_columns(self):
         with self.assertRaises(Exception) as ecm:
-            boundedDisplay = BoundedCharacterTerminalDisplay(rows=4, columns=0, characterEncoding='ascii')
+            BoundedCharacterTerminalDisplay(rows=4, columns=0, characterEncoding='ascii')
 
         actualException = ecm.exception
-        self.assertEquals(str(actualException), 'Number of columns must be greater than zero')
+        self.assertEqual(str(actualException), 'Number of columns must be greater than zero')
 
     def test_prepare_selection_menu_display_buffer(self):
         selectionOptions = [SelectionOption("id1", "Option 1"), SelectionOption("id2", "Option 2"), SelectionOption("id3", "Option 3"), SelectionOption("id4", "Option 4"), SelectionOption("id5", "Option 5")]
@@ -109,14 +110,61 @@ class TestBoundedCharacterTerminalDisplay(unittest.TestCase):
     def test_display_output(self):
 
         output = bytearray("01234567890123456789012345678901234567890", 'ascii')
-        numRows = 4
-        numColumns = 20
 
         self._boundedDisplay._output_data = MagicMock()
         calls = [call('01234567890123456789'), call('01234567890123456789'), call('0')]
 
         self._boundedDisplay.display_output(None, output) 
         self._boundedDisplay._output_data.assert_has_calls(calls)
+
+class TestSparkfun4x20LCDDisplay(unittest.TestCase):
+
+    @patch('menu.display.sparkfunlcd.QwiicSerlcd')
+    def test_display_menu(self, mockLcd):
+
+        display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
+        self.assertEqual(mockLcd.mock_calls, [call(), call().connected.__eq__(False), call().setBacklight(0, 0, 0), call().setContrast(5), call().clearScreen(), call().leftToRight(), call().noCursor()])
+
+        option1 = SelectionOption(id='id1', displayName="option1", )
+        option2 = SelectionOption(id='id2', displayName="option2", )
+        selectionOptions = [option1, option2]
+        menuNode = MenuNode(id='', menuNodeType=None, selectionOptions=selectionOptions, confirm=False, executorNodeId=None, isRoot=False)
+        display.display_menu(menuNode, 0)
+
+        self.assertTrue(all(x in mockLcd.mock_calls for x in [call().setCursor(0, 0), call().setCursor(0, 1)]))
+        self.assertTrue(all(x in mockLcd.mock_calls for x in [call().print('>1: option1         '), call().print(' 2: option2         ')]))
+
+    @patch('menu.display.sparkfunlcd.QwiicSerlcd')
+    def test_display_menu_no_selection_options(self, mockLcd):
+
+        display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
+        self.assertEqual(mockLcd.mock_calls, [call(), call().connected.__eq__(False), call().setBacklight(0, 0, 0), call().setContrast(5), call().clearScreen(), call().leftToRight(), call().noCursor()])
+
+        menuNode = MenuNode(id='', menuNodeType=None, selectionOptions=None, confirm=False, executorNodeId=None, isRoot=False)
+        with self.assertRaises(Exception) as ecm:
+            display.display_menu(menuNode, 0)
+
+        actualException = ecm.exception
+        self.assertEqual(str(actualException), 'Must have selection options to display')
+
+    @patch('menu.display.sparkfunlcd.QwiicSerlcd')
+    def test_display_output_no_data(self, mockLcd):
+
+        display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
+        self.assertEqual(mockLcd.mock_calls, [call(), call().connected.__eq__(False), call().setBacklight(0, 0, 0), call().setContrast(5), call().clearScreen(), call().leftToRight(), call().noCursor()])
+
+        display.display_output(None, None)
+        self.assertFalse(mockLcd.print.called)
+
+    @patch('menu.display.sparkfunlcd.QwiicSerlcd')
+    def test_display_output(self, mockLcd):
+
+        display = Sparkfun4x20LCDDisplay(4, 20, 'ascii')
+        self.assertEqual(mockLcd.mock_calls, [call(), call().connected.__eq__(False), call().setBacklight(0, 0, 0), call().setContrast(5), call().clearScreen(), call().leftToRight(), call().noCursor()])
+
+        display.display_output(None, bytearray("Hello World", 'ascii'))
+
+        self.assertTrue(mockLcd.print.called_with('Hello World'))
 
 
 if __name__ == '__main__':

@@ -44,6 +44,7 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
         self.clear()
 
         selectionOptions = menunode.selection_options
+
         if not selectionOptions:
             logging.error("Must have selection options to display")
             raise Exception("Must have selection options to display")
@@ -53,7 +54,7 @@ class Sparkfun4x20LCDDisplay(BoundedCharacterDisplay):
         displayBuffer = self.prepare_selection_menu_display_buffer(selectionOptions, self._windowTop, self._windowBottom, cursorPos)
         self._send_data_to_lcd(displayBuffer)
 
-    def display_output(self, menunode: MenuNode, output: str):
+    def display_output(self, menunode: MenuNode, output: bytearray):
 
         self.clear()
 
