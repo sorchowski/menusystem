@@ -5,8 +5,6 @@ import subprocess
 from subprocess import CalledProcessError
 from pathlib import Path
 
-# https://shortunique.id/
-
 def check_for_duplicates(dlist):
     if len(dlist) != len(set(dlist)):
         logging.error("Duplicates found")

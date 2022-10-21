@@ -7,6 +7,16 @@ from menu.menus import MenuNode
 
 # Not meant for instantiation
 class BoundedCharacterDisplay(Display):
+    '''
+        A "Bounded" version of a Display. The display area is restricted to a set number of rows and columns.
+        Each column is an individual character. Users should provide a character encoding value compatible with bytearray.
+
+        This class cannot be instantiated.
+
+        Bounded displays can exist in a terminal or lcd format or any display where the formatting of the character
+        output size is restricted.
+    '''
+
     def __init__(self, numRows: int, numColumns: int, characterEncoding: str):
         self._numRows = numRows
         if (numRows == 0):
@@ -31,7 +41,11 @@ class BoundedCharacterDisplay(Display):
             self._windowBottom += 1
 
     def prepare_selection_menu_display_buffer(self, selectionOptions: List[SelectionOption], windowTop: int, windowBottom: int, cursorPos: int) -> List[bytearray]:
-
+        '''
+        Accepts a list of Menu Selection Options and returns a list of byte arrays where each represents a row to be
+        displayed on the menu. Selection Option display values for each row will be cropped according to the number of
+        columns set for the Bounded display.
+        '''
         windowOptions = [(position, selectionOption) for position, selectionOption in enumerate(selectionOptions)]
 
         rowByteArrays = []
@@ -50,7 +64,11 @@ class BoundedCharacterDisplay(Display):
         return rowByteArrays
 
     def prepare_output_display_buffer(self, output: bytearray, numRows, numColumns) -> List[bytearray]:
-
+        '''
+        Accepts an arbitrary length string to be output to the display. The output string is converted to a list
+        of byte arrays to be displayed. The original string will be cropped to the total number of characters
+        available in the display (rows*characters/row).
+        '''
         rowByteArrays = []
         splitNum = numColumns
         rows = [output[i:i+splitNum] for i in range(0, len(output), splitNum)]

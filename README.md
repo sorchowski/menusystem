@@ -15,8 +15,8 @@
    - [Terminal Menu](#terminal-menu)
    - [Raspberry Pi Menu](#raspberry-pi-menu)
 4. [Executing unit tests](#executing-unit-tests)
-5. [Immediate TODOs](#immediate-todos)
-6. [Future Improvements](#future-improvements)
+5. [Future Improvements](#future-improvements)
+   - [Robustness](#robustness)
 
 # Introduction
 
@@ -139,18 +139,16 @@ See the systemd unit file [rpimenu.service](menuservice/rpimenu.service) for run
 
 From the top-level directory, run the command: `python -m unittest discover -s test`
 
-# Immediate TODOs
-
-1. unit tests!
-2. choose oss license
-3. add try/catch around main menusystem::run() loop for graceful shutdown (or continuous operation?)?
-
 # Future Improvements
 
-1. Consider the necessity of adding a timeout to the queue.get() so that the main run method doesn't block forever if the service should stop
-2. Handle control-c for KeyboardMenuAction
-3. Refine setup.py to be compatible with setuptools or run as pip install
-4. Add ability to scroll through output of script or method
-5. Add ability to return to previous menu (outside of confirmation menu "no") via left button press
-6. Ability to start rpimenuservice in virtual environment. sudo appears to give a different set of path values.
-7. Allow the menu system to accept complex string input at a menu prompt.
+1. Handle control-c for KeyboardMenuAction.
+2. Refine setup.py to be compatible with setuptools or run as pip install.
+3. Add ability to scroll through output of script or method.
+4. Add ability to return to previous menu (outside of confirmation menu "no") via left button press.
+5. Ability to start rpimenuservice in virtual environment. sudo appears to give a different set of path values.
+6. Allow the menu system to accept complex string input at a menu prompt.
+
+## Robustness
+1. Add try/catch around main menusystem::run() loop for graceful shutdown (or continuous operation?)?
+2. Consider the necessity of adding a timeout to the queue.get() so that the main run method doesn't block forever if the service should stop.
+3. Add better logging or an exception for MenuActions that are not supported by MenuSystem

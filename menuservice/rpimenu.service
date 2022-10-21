@@ -23,6 +23,7 @@
 Description=RPI Menu System
 After=multi-user.target
 
+# TODO: can we fix the version/path reference below?
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /usr/local/lib/python3.10/dist-packages/Simple_Menu_System-0.0.1-py3.10.egg/menuservice/rpimenuservice.py

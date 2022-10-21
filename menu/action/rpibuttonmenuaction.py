@@ -8,7 +8,12 @@ from menu.action.menuaction import MenuAction
 import RPi.GPIO as GPIO
 
 class RPiButtonBoardMenuAction(MenuAction):
+    '''
+    A MenuAction class that accepts button presses interfaced via Raspberry Pi GPIO interrupts.
 
+    Buttons are mapped to specific Raspberry Pi GPIO lines and converted to a particular MenuAction
+    before being passed on to the MenuSystem.
+    '''
     def __init__(self,
         actionQueue: Queue,\
         s1Pin: int, \

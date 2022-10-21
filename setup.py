@@ -16,7 +16,7 @@ setup(
     author = "Stephen Orchowski",
     author_email = "steveoaz@gmail.com",
     description = ("A simple menuing system for triggering the execution of scripts (or methods) via user input"),
-    license = "TODO",
+    license = "BSD",
     keywords = "menu raspberrypi lcd button terminal keyboard",
     url = "http://packages.python.org/an_example_pypi_project",
     packages=['menu', 'menu.action', 'menu.display', 'menuservice', 'test', 'test.action', 'test.display'],

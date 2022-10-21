@@ -3,6 +3,10 @@ from queue import Queue
 from .menuaction import MenuAction
 
 class KeyboardMenuAction(MenuAction):
+    '''
+    A MenuAction class that accepts character input from a standard keyboard key press. A single character is
+    mapped to a MenuAction before being passed to the MenuSystem.
+    '''
     def __init__(self, actionQueue: Queue):
         self._actionQueue = actionQueue
         self._exitEvent = threading.Event()
