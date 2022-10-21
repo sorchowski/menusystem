@@ -22,7 +22,7 @@
 
 This is a collection of python classes and scripts for implementing a basic menuing system. Users navigate a collection of options and sub-options. When selected, each option triggers the execution of a script or registered method.
 
-[Menu System](./images/home_menu.jpg)
+<img src='./images/home_menu.jpg'/>
 
 # Structure of a menu system
 
