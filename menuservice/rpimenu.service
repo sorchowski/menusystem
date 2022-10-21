@@ -13,11 +13,11 @@
 
 #  $ systemctl list-unit-files | grep rpimenu.service
 #  $ systemctl daemon-reload
-#  $ systemctl restart rpi_menu_service
-#  $ systemctl enable rpi_menu_service
-#  $ systemctl start rpi_menu_service
-#  $ systemctl stop rpi_menu_service
-#  $ systemctl status rpi_menu_service
+#  $ systemctl restart rpimenu.service
+#  $ systemctl enable rpimenu.service
+#  $ systemctl start rpimenu.service
+#  $ systemctl stop rpimenu.service
+#  $ systemctl status rpimenu.service
 
 [Unit]
 Description=RPI Menu System

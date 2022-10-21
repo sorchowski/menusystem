@@ -135,6 +135,13 @@ The button's GPIO usage requires this program be run as root.
 
 See the systemd unit file [rpimenu.service](menuservice/rpimenu.service) for running as a standalone service.
 
+My example implementation consists of:
+1. A Raspberry Pi 4
+2. [a SparkFun 20x4 SerLCD](https://www.sparkfun.com/products/16398) connected to the Pi via I2C (qwiic)
+3. [a custom pcb designed in Eagle on which to mount several buttons](./images/pcb.jpg) This board is connected to the Pi's GPIO pins.
+
+Here's [some photos](./images) of the system in action.
+
 # Executing unit tests
 
 From the top-level directory, run the command: `python -m unittest discover -s test`
